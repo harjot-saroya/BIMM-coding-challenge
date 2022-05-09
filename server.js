@@ -3,12 +3,12 @@ const cors = require('cors')
 const axios = require('axios')
 const xml2js = require('xml2js')
 const request = require('request-promise')
-const https = require('https')
-const fs = require('fs')
+// const https = require('https')
+// const fs = require('fs')
 const { type } = require('express/lib/response')
 const app = express()
 const port = 3001
-const parseXML = require('xml-parse-from-string')
+// const parseXML = require('xml-parse-from-string')
 
 //const info = require('./getallmakes.xml');
 
@@ -33,7 +33,7 @@ app.get('/', async (req, res) => {
         json: true,
         gzip: true
     });
-    console.log(parseXML(resp))
+    // console.log(parseXML(resp))
 
 
     console.log('doc', xml)
