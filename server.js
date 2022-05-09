@@ -21,7 +21,6 @@ app.post('/xmlParse', (req, res) => {
 app.get('/', async (req, res) => {
 
     res.send('YUH YUH')
-    let xml = ''
     //const file = await axios.get('https://vpic.nhtsa.dot.gov/api/vehicles/getallmakes?format=XML')
 
     let resp = await request({
@@ -31,12 +30,6 @@ app.get('/', async (req, res) => {
         json: true,
         gzip: true
     });
-    // const filename = 'test1.xml'
-    // fs.writeFile(filename, resp, function (err) {
-    //     if (err) return console.log(err);
-    //     console.log('Hello World > helloworld.txt');
-    // })
-    //console.log(parseXML(resp))
 
 
     // const xmlString = file.data
@@ -44,7 +37,7 @@ app.get('/', async (req, res) => {
     let xml_string = fs.readFileSync('./test1.xml', "utf8");
     const parser2 = await xml2js.parseStringPromise(xml_string)
     const Response = parser2.Response.Results[0].AllVehicleMakes
-    const vehicleMakes = Response.map((element) => { return element.Make_Name[0] })
+    const vehicleMakes = Response.map((element) => { return { makeName: element.Make_Name[0], makeId: element.Make_ID[0] } })
     console.log(vehicleMakes)
 })
 
