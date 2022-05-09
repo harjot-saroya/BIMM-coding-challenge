@@ -1,11 +1,9 @@
 const express = require('express')
 const cors = require('cors')
-const axios = require('axios')
 const xml2js = require('xml2js')
+const bodyParser = require('body-parser');
 const request = require('request-promise')
-// const https = require('https')
-// const fs = require('fs')
-const { type } = require('express/lib/response')
+const fs = require('fs')
 const app = express()
 const port = 3001
 // const parseXML = require('xml-parse-from-string')
@@ -14,10 +12,10 @@ const port = 3001
 
 app.use(cors())
 app.use(express.json())
-
+app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/xmlParse', (req, res) => {
-    console.log('Raw XML: ' + req.rawBody);
-    console.log('Parsed XML: ' + JSON.stringify(req.body));
+    console.log('Raw XML: ' + JSON.stringify(req.body));
+    res.send('hit')
 })
 
 app.get('/', async (req, res) => {
@@ -33,25 +31,21 @@ app.get('/', async (req, res) => {
         json: true,
         gzip: true
     });
-    // console.log(parseXML(resp))
+    // const filename = 'test1.xml'
+    // fs.writeFile(filename, resp, function (err) {
+    //     if (err) return console.log(err);
+    //     console.log('Hello World > helloworld.txt');
+    // })
+    //console.log(parseXML(resp))
 
-
-    console.log('doc', xml)
 
     // const xmlString = file.data
-    // const parser = new xml2js.Parser({ attrkey: "ATTR" });
-    // let xml_string = fs.readFileSync(info, "utf8");
-
-    // parser.parseString(xml_string, function (error, result) {
-    //     if (error === null) {
-    //         console.log(result);
-    //     }
-    //     else {
-    //         console.log(error);
-    //     }
-    // });
-
-    //console.log(x)
+    const parser = new xml2js.Parser({ attrkey: "ATTR" });
+    let xml_string = fs.readFileSync('./test1.xml', "utf8");
+    const parser2 = await xml2js.parseStringPromise(xml_string)
+    const Response = parser2.Response.Results[0].AllVehicleMakes
+    const vehicleMakes = Response.map((element) => { return element.Make_Name[0] })
+    console.log(vehicleMakes)
 })
 
 app.listen(port, () => {
