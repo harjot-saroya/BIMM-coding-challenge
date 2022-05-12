@@ -13,8 +13,7 @@ postData = {
 
 //the config for our HTTP POST request
 postConfig = {
-    url: ' http://localhost:3001/xmlParse',
-    form: postData
+    url: 'http://localhost:3001/',
 };
 
 //the HTTP POST request success handler
@@ -24,4 +23,4 @@ postSuccessHandler = function (err, httpResponse, body) {
 };
 
 //make the POST request
-request.post(postConfig, postSuccessHandler);
+request.get(postConfig, postSuccessHandler);
