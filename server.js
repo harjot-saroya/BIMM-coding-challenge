@@ -6,7 +6,6 @@ const request = require('request-promise')
 const fs = require('fs')
 const app = express()
 const port = 3001
-process.env.UV_THREADPOOL_SIZE = 128;
 
 app.use(cors())
 app.use(express.json())
@@ -50,7 +49,7 @@ const MakeTemplate = (items) => {
             console.error(err);
         }
         console.log('Finished write')
-    }));
+    })
     return form
 }
 app.get('/', async (req, res) => {
