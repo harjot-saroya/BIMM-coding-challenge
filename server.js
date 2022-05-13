@@ -13,12 +13,11 @@ app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const getInformationById = async (makeId, makeName) => {
-    const randomHeader = (Math.floor(Math.random() * 90000) + 10000).toString()
     let xmlString = ''
     try {
         xmlString = await request({
             uri: `https://vpic.nhtsa.dot.gov/api/vehicles/GetVehicleTypesForMakeId/${makeId}?format=xml`,
-            headers: { 'user-agent': "#########" },
+            headers: { 'user-agent': "Google" },
             timeout: 10000,
             forever: true,
             json: true,
@@ -46,17 +45,16 @@ const MakeTemplate = (items) => {
     }) + ']'
 
 
-    fs.writeFile('./results.js', form, err => {
+    console.log('writefile', fs.writeFile('./results.js', form, err => {
         if (err) {
             console.error(err);
         }
-    });
+        console.log('Finished write')
+    }));
+    return form
 }
 app.get('/', async (req, res) => {
 
-    res.send('YUH YUH')
-
-    const parser = new xml2js.Parser({ attrkey: "ATTR" });
     let xml_string = fs.readFileSync('./getAllMakes.xml', "utf8");
     const parser2 = await xml2js.parseStringPromise(xml_string)
     const Response = parser2.Response.Results[0].AllVehicleMakes
@@ -65,12 +63,9 @@ app.get('/', async (req, res) => {
     const resmap = ids.map((id) => { return getInformationById(id.makeId, id.makeName) })
     const test = await Promise.all(resmap)
     const nonEmptyMakes = test.filter((element) => element[0] != '')
-    console.log('noneEmp', nonEmptyMakes)
     const convertedMakes = nonEmptyMakes.map(async (element) => {
         const parsed = await parseMake(element[0])
         const makeName = element[1]
-        console.log(element, parsed.Response)
-
         const makeId = await parsed.Response.SearchCriteria[0].slice(9)
         const vehicleTypes = await parsed.Response.Results[0].VehicleTypesForMakeIds
         return { parsed, makeId, vehicleTypes, makeName }
@@ -79,10 +74,8 @@ app.get('/', async (req, res) => {
     )
     const parsedMakes = await Promise.all(convertedMakes);
 
-    MakeTemplate(parsedMakes)
-    console.log(await Promise.all(convertedMakes))
-    //console.log(test)
-    //console.log(await resp(400))
+    const Form = MakeTemplate(parsedMakes)
+    res.send(Form)
 })
 
 

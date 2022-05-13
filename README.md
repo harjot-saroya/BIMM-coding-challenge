@@ -1,1 +1,1 @@
-docker run -p 5000:3001 ff59bf47e19c461269b3923dcffec01d3e14b4304a6be4f8554f07e9b1e57cdf
+docker run -p 3001:3001 express
